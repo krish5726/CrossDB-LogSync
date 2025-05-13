@@ -1,0 +1,33 @@
+create table student_course_grades_staged(
+    studentid string,
+    courseid string,
+    rollno string,
+    emailid string,
+    grade string
+)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+WITH SERDEPROPERTIES (
+    "separatorChar" = ","
+)
+STORED AS TEXTFILE
+TBLPROPERTIES ("skip.header.line.count"="1");
+
+load data local inpath 'student_course_grades.csv' into table student_course_grades_staged;
+
+CREATE TABLE student_course_grades (
+    studentid STRING,
+    courseid STRING,
+    rollno STRING,
+    emailid STRING,
+    grade STRING,
+    last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+STORED AS ORC
+TBLPROPERTIES (
+    'transactional' = 'true'
+);
+
+INSERT INTO TABLE student_course_grades (studentid, courseid, rollno, emailid, grade)
+SELECT studentid, courseid, rollno, emailid, grade
+FROM student_course_grades_staged;
+

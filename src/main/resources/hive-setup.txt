@@ -1,0 +1,14 @@
+You need to have hive installed in the machine we prefer docker installed to install hive so that hive doesnt create issues
+In host machine:
+docker pull apache/hive:4.0.1
+docker run -d -p 10000:10000 -p 10002:10002 --env SERVICE_NAME=hiveserver2 --name hive4 apache/hive:4.0.1
+docker cp student_course_grades.csv hive4:/opt/hive/
+docker cp hive-site.xml hive4:/opt/hive/conf/
+
+Inside the docker conatiner terminal
+beeline -u jdbc:hive2://localhost:10000
+
+Inside beeline
+create database testdb;
+use testdb;
+now execute the commands given inside the load_data_hive.hiveql
